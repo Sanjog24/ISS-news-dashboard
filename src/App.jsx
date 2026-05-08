@@ -302,17 +302,21 @@ function App() {
     const apiKey = import.meta.env.VITE_NEWS_API_KEY
     let articles = []
 
-    if (apiKey) {
-      try {
-        const newsApiUrl = `https://newsapi.org/v2/everything?q=${encodeURIComponent(
-          category === 'Space' ? 'space OR NASA OR ISS' : 'science OR technology',
-        )}&language=en&pageSize=5&sortBy=publishedAt&apiKey=${apiKey}`
-        const data = await fetchJson(newsApiUrl)
-        articles = (data.articles || []).slice(0, 5).map((article) => normalizeArticle(article, category, 'newsapi'))
-      } catch {
-        articles = []
-      }
-    }
+if (apiKey) {
+  try {
+    const newsApiUrl = `https://gnews.io/api/v4/search?q=${encodeURIComponent(
+      category === 'Space' ? 'space OR NASA OR ISS' : 'science OR technology'
+    )}&lang=en&max=5&sortby=publishedAt&apikey=${apiKey}`
+
+    const data = await fetchJson(newsApiUrl)
+
+    articles = (data.articles || [])
+      .slice(0, 5)
+      .map((article) => normalizeArticle(article, category, 'gnews'))
+  } catch {
+    articles = []
+  }
+}
 
     if (!articles.length) {
       const search = category === 'Space' ? 'ISS' : 'science'
